@@ -1,5 +1,5 @@
 // Renders the Web Store promo tile (440x280) and the padded 128px store icon into docs/store/.
-// Screenshots (1280x800) come from tests/e2e/screenshots.spec.mjs (SCREENSHOTS=1 npm run test:e2e).
+// Screenshots (1280x800) come from tests/e2e/screenshots.spec.mjs (npm run screenshots).
 import { Resvg } from '@resvg/resvg-js';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';

@@ -18,7 +18,7 @@ How it works
 
 What it does on an enabled site
 • Stops the page's scripts from cancelling paste, copy and cut.
-• Stops the page from blocking Ctrl/Cmd+C, V, X, A (and Shift+Insert / Shift+Delete).
+• Stops the page from blocking Ctrl/Cmd+C, V, X, A, Insert (and Shift+Insert / Shift+Delete).
 • Restores the native right-click menu.
 • Makes text selectable again (overrides user-select: none).
 

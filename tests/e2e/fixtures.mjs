@@ -1,5 +1,5 @@
 import { test as base, chromium, expect } from '@playwright/test';
-import { mkdtempSync } from 'node:fs';
+import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -23,10 +23,14 @@ export const test = base.extend({
     await context.grantPermissions(['clipboard-read', 'clipboard-write'], { origin: DEMO_ORIGIN });
     await use(context);
     await context.close();
+    rmSync(userDataDir, { recursive: true, force: true });
   },
   sw: async ({ context }, use) => {
     let [sw] = context.serviceWorkers();
     if (!sw) sw = await context.waitForEvent('serviceworker');
+    // The e2e build pre-grants the demo origin, so install-time reconcile auto-enables it.
+    // Start every test from "nothing enabled" — the production state.
+    await sw.evaluate(async () => { await reconcile(); await chrome.scripting.unregisterContentScripts(); });
     await use(sw);
   },
 });

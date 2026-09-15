@@ -80,6 +80,10 @@ async function doReconcile() {
     if (origin && !registered.has(scriptIdFor(origin))) missing.push(registrationFor(origin));
   }
   if (missing.length) await chrome.scripting.registerContentScripts(missing);
+  // Registrations may have just changed (or nothing was missing but badges were never set this
+  // session); refresh every open tab so its badge reflects the current registration state.
+  const tabs = await chrome.tabs.query({});
+  await Promise.all(tabs.map((t) => refreshBadge(t.id, t.url)));
 }
 
 async function refreshBadge(tabId, url) {
@@ -96,6 +100,13 @@ async function refreshBadge(tabId, url) {
 chrome.runtime.onInstalled.addListener(() => { reconcile(); });
 chrome.runtime.onStartup.addListener(() => { reconcile(); });
 
+// Chrome can revoke a runtime-granted host without us (chrome://extensions → Site access).
+// Drop the matching registration so the next click enables instead of toggling off.
+chrome.permissions.onRemoved.addListener(({ origins = [] }) => {
+  const ids = origins.map(originFromPattern).filter(Boolean).map(scriptIdFor);
+  if (ids.length) chrome.scripting.unregisterContentScripts({ ids }).catch(() => {});
+});
+
 chrome.action.onClicked.addListener((tab) => {
   const origin = originOf(tab.url);
   if (!origin) {
@@ -107,7 +118,10 @@ chrome.action.onClicked.addListener((tab) => {
   // synchronous part of this handler. Already-granted origins resolve true without a prompt.
   chrome.permissions.request({ origins: [patternFor(origin)] }).then((granted) => {
     if (granted) return toggleOrigin(origin, tab.id);
-  }).catch((e) => console.warn('Copypasta: toggle failed', e));
+  }).catch((e) => {
+    console.warn('Copypasta: toggle failed', e);
+    chrome.action.setBadgeText({ tabId: tab.id, text: '✕' });
+  });
 });
 
 chrome.tabs.onActivated.addListener(({ tabId }) => {
@@ -124,6 +138,6 @@ chrome.runtime.onMessage.addListener((msg, sender) => {
       target: { tabId: sender.tab.id, frameIds: [sender.frameId] },
       files: ['content.css'],
       origin: 'USER',
-    });
+    }).catch(() => {}); // frame may have navigated away between the message and the insert
   }
 });

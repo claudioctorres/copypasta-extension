@@ -11,12 +11,6 @@ const badgeOfDemoTab = (sw) => sw.evaluate(async (origin) => {
   return chrome.action.getBadgeText({ tabId: tab.id });
 }, DEMO_ORIGIN);
 
-test.beforeEach(async ({ sw }) => {
-  // The e2e build pre-grants the demo origin, so reconcile() auto-enables it at install.
-  // Start every test from "nothing enabled", the production state.
-  await sw.evaluate(async () => { await reconcile(); await chrome.scripting.unregisterContentScripts(); });
-});
-
 test('enable: registers the origin, injects without reload, and the document_start script works after reload', async ({ context, sw }) => {
   const page = await context.newPage();
   await page.goto(DEMO_URL);

@@ -8,7 +8,6 @@ const OUT = fileURLToPath(new URL('../../docs/store/', import.meta.url));
 
 test('store screenshots', async ({ context, sw }) => {
   mkdirSync(OUT, { recursive: true });
-  await sw.evaluate(async () => { await reconcile(); await chrome.scripting.unregisterContentScripts(); });
   const page = await context.newPage();
   await page.goto(DEMO_URL);
   await setClipboard(page, 'Hello from the clipboard 🍝');
@@ -20,6 +19,8 @@ test('store screenshots', async ({ context, sw }) => {
     const [tab] = await chrome.tabs.query({ url: origin + '/*' });
     await toggleOrigin(origin, tab.id);
   }, DEMO_ORIGIN);
+  await page.reload(); // the registered document_start script handles the reloaded page
+  await setClipboard(page, 'Hello from the clipboard 🍝');
   await pasteInto(page, '#paste-blocked');
   await pasteInto(page, '#key-blocked');
   await expect(page.locator('#key-blocked')).toHaveValue('Hello from the clipboard 🍝');

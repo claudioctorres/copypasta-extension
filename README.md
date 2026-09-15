@@ -4,7 +4,7 @@ Chrome extension that re-enables copy, cut, paste, text selection and the native
 
 ## How it works
 
-A content script runs before any page script and registers capture-phase listeners on `window` for `paste`, `copy`, `cut`, `contextmenu` and clipboard key combos (Ctrl/Cmd+C/V/X/A, Shift+Insert, Shift+Delete). It calls `stopImmediatePropagation()`, so the page's own handlers never run — but the browser's default action still does. A user-origin stylesheet forces `user-select: text`.
+A content script runs before any page script and registers capture-phase listeners on `window` for `paste`, `copy`, `cut`, `contextmenu` and clipboard key combos (Ctrl/Cmd+C/V/X/A/Insert, Shift+Insert, Shift+Delete). It calls `stopImmediatePropagation()`, so the page's own handlers never run — but the browser's default action still does. A user-origin stylesheet forces `user-select: text`.
 
 Enabling a site requests an optional host permission for that origin only and registers the content script for it. State = granted permissions ∩ registered scripts; no storage, no network, no telemetry.
 

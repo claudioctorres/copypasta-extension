@@ -83,11 +83,13 @@ Requesting an already-granted origin resolves `true` with no prompt (verified in
 
 **CSS message:** `runtime.onMessage` for `{type:'copypasta:css'}` → `scripting.insertCSS({ target:{ tabId: sender.tab.id, frameIds:[sender.frameId] }, files:['content.css'], origin:'USER' })`.
 
-**Test builds:** `permissions.remove` and the reconcile step skip any pattern listed verbatim in the manifest's `host_permissions` (empty in production; the e2e build declares `http://127.0.0.1:4173/*`).
+**Test builds:** `permissions.remove` skips any pattern listed verbatim in the manifest's `host_permissions` (Chrome refuses to remove required permissions). Reconcile registers every granted origin, declared or not — that is what lets the e2e build (which declares `http://127.0.0.1:4173/*`) exercise it; the e2e fixture resets to "nothing registered" before each test.
 
 ### 3.2 Reconcile on `runtime.onInstalled` and `runtime.onStartup`
 
 Dynamic registrations are cleared on every install/update/reload (`StateStore::OnExtensionWillBeInstalled` wipes the `dynamic_scripts` key); runtime-granted permissions live in `runtime_granted_permissions` prefs and survive. On both events: `for each origin in permissions.getAll().origins → register if not registered`. Idempotent.
+
+A `permissions.onRemoved` listener unregisters the matching script when Chrome revokes a site permission outside the extension, so the next click enables rather than toggles off.
 
 ### 3.3 Badge
 

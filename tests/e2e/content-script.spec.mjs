@@ -5,13 +5,7 @@ const injectIntoDemoTab = (sw) => sw.evaluate(async (origin) => {
   await injectNow(tab.id);
 }, DEMO_ORIGIN);
 
-test.beforeEach(async ({ sw }) => {
-  // The e2e build pre-grants the demo origin, so reconcile() (added in Task 6) auto-enables it at
-  // install. Reset to "nothing enabled" so these tests' own injectNow calls are what's under test.
-  await sw.evaluate(async () => { await reconcile(); await chrome.scripting.unregisterContentScripts(); });
-});
-
-test('baseline: the demo page blocks paste, Ctrl+V, right-click and selection', async ({ context }) => {
+test('baseline: the demo page blocks paste, Ctrl+V, right-click and selection', async ({ context, sw }) => {
   const page = await context.newPage();
   await page.goto(DEMO_URL);
   await setClipboard(page, 'ciao');
