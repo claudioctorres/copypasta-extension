@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Copypasta demo — a page that blocks paste</title>
+<style>
+  body { font: 16px/1.5 system-ui, sans-serif; max-width: 640px; margin: 40px auto; padding: 0 16px; color: #222; background: #fff; }
+  h1 { font-size: 1.6rem; }
+  label { display: block; margin-top: 1.25rem; font-weight: 600; }
+  input { width: 100%; font-size: 1rem; padding: .5rem; box-sizing: border-box; }
+  code { background: #f2f2f2; padding: 0 .25em; border-radius: 3px; }
+  #p { user-select: none !important; -webkit-user-select: none !important; background: #fff3cd; padding: .75rem; border-radius: 6px; }
+  #status { margin-top: 1.5rem; font-weight: 700; }
+  #log { font: 12px/1.4 ui-monospace, monospace; color: #666; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+<h1>🍝 Copypasta demo: this page blocks copy &amp; paste</h1>
+<p>Every field below blocks pasting the way real sites do. Click the Copypasta icon to turn it on for this site, then try again.</p>
+
+<label for="paste-blocked">Blocked with <code>onpaste="return false"</code> and a document <code>paste</code> listener</label>
+<input id="paste-blocked" autocomplete="off" onpaste="return false" placeholder="Try to paste here">
+
+<label for="key-blocked">Blocked with a <code>keydown</code> listener that cancels Ctrl+V</label>
+<input id="key-blocked" autocomplete="off" placeholder="Try Ctrl+V here">
+
+<p id="p">This paragraph has <code>user-select: none !important</code>. Try to select it or right-click it.</p>
+
+<p id="status">Nothing pasted yet.</p>
+<pre id="log"></pre>
+
+<script>
+  window.__log = [];
+  var log = function (s) { window.__log.push(s); document.getElementById('log').textContent = window.__log.join('\n'); };
+  ['paste', 'copy', 'cut'].forEach(function (t) {
+    document.addEventListener(t, function (e) { e.preventDefault(); log(t + ' blocked by page'); });
+  });
+  document.addEventListener('contextmenu', function (e) { e.preventDefault(); log('contextmenu blocked by page'); });
+  document.getElementById('key-blocked').addEventListener('keydown', function (e) {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'v') { e.preventDefault(); log('keydown ctrl+v blocked by page'); }
+  });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Enter') log('keydown enter reached page'); });
+  document.addEventListener('input', function (e) { document.getElementById('status').textContent = '🍝 Pasted: ' + e.target.value; });
+</script>
+</body>
+</html>
