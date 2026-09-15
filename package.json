@@ -6,8 +6,10 @@
   "engines": { "node": ">=24" },
   "scripts": {
     "test": "node --test \"tests/unit/**/*.test.js\"",
-    "test:e2e": "npm run build:test-ext && playwright test",
+    "test:e2e": "npm run build:test-ext && playwright test --project=e2e",
+    "screenshots": "npm run build:test-ext && playwright test --project=screenshots",
     "build:icons": "node scripts/build-icons.mjs",
+    "build:store-assets": "node scripts/build-store-assets.mjs",
     "build:test-ext": "node scripts/build-test-ext.mjs",
     "package": "node scripts/package.mjs",
     "serve:demo": "node scripts/serve-demo.mjs"

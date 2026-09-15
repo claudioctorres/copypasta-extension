@@ -7,4 +7,8 @@ export default defineConfig({
   reporter: 'list',
   webServer: { command: 'node scripts/serve-demo.mjs', url: 'http://127.0.0.1:4173/', reuseExistingServer: true },
   use: { trace: 'retain-on-failure' },
+  projects: [
+    { name: 'e2e', testIgnore: /screenshots\.spec\.mjs$/ },
+    { name: 'screenshots', testMatch: /screenshots\.spec\.mjs$/ },
+  ],
 });
