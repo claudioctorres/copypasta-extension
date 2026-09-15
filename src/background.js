@@ -49,10 +49,16 @@ async function toggleOrigin(origin, tabId) {
   const tabs = await chrome.tabs.query({ url: patternFor(origin) });
   if (wasEnabled) {
     await disableOrigin(origin);
-    if (tabId != null) await chrome.tabs.reload(tabId);
+    // The registration change above is already committed; a tab gone (chrome-error://, closed,
+    // navigated away) must not skip the badge refresh below.
+    if (tabId != null) {
+      try { await chrome.tabs.reload(tabId); } catch (e) { console.warn('Copypasta: could not reload tab', tabId, e); }
+    }
   } else {
     await enableOrigin(origin);
-    if (tabId != null) await injectNow(tabId);
+    if (tabId != null) {
+      try { await injectNow(tabId); } catch (e) { console.warn('Copypasta: could not inject into tab', tabId, e); }
+    }
   }
   await Promise.all(tabs.map((t) => refreshBadge(t.id, t.url)));
   return !wasEnabled;
@@ -101,11 +107,12 @@ chrome.action.onClicked.addListener((tab) => {
   // synchronous part of this handler. Already-granted origins resolve true without a prompt.
   chrome.permissions.request({ origins: [patternFor(origin)] }).then((granted) => {
     if (granted) return toggleOrigin(origin, tab.id);
-  });
+  }).catch((e) => console.warn('Copypasta: toggle failed', e));
 });
 
 chrome.tabs.onActivated.addListener(({ tabId }) => {
-  chrome.tabs.get(tabId).then((tab) => refreshBadge(tab.id, tab.url));
+  // A tab closed between the event and this call throws "No tab with id"; nothing to badge.
+  chrome.tabs.get(tabId).then((tab) => refreshBadge(tab.id, tab.url)).catch(() => {});
 });
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (changeInfo.status) refreshBadge(tabId, tab.url);

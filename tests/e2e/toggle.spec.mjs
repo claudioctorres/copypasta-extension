@@ -40,6 +40,7 @@ test('enable: registers the origin, injects without reload, and the document_sta
   await expect(page.locator('#paste-blocked')).toHaveValue('prego');
   await expect(page.locator('#key-blocked')).toHaveValue('prego');
   expect(await pageLog(page)).not.toContain('paste blocked by page');
+  await expect.poll(() => badgeOfDemoTab(sw)).toBe('ON');
 });
 
 test('disable: unregisters, reloads the tab, and the page blocks again', async ({ context, sw }) => {
