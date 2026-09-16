@@ -48,11 +48,11 @@ Icon: Twemoji 🍝 by Twitter/X, licensed CC-BY 4.0.
 
 **Data usage:** tick nothing under "What user data do you plan to collect"; certify all three disclosures.
 
-**Privacy policy URL:** https://OWNER.github.io/REPO/privacy
+**Privacy policy URL:** https://claudioctorres.github.io/copypasta-extension/privacy
 
 ## Test instructions for reviewers (Distribution → "Notes for reviewer" or the review form)
 
-1. Open https://OWNER.github.io/REPO/demo/ — a page that blocks paste, Ctrl+V, right-click and selection.
+1. Open https://claudioctorres.github.io/copypasta-extension/demo/ — a page that blocks paste, Ctrl+V, right-click and selection.
 2. Try to paste into the first field: nothing happens.
 3. Click the Copypasta toolbar icon and accept the permission prompt for that site.
 4. Paste again: it works, the badge shows ON, the yellow paragraph is selectable, right-click opens the native menu.
