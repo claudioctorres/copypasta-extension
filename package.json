@@ -1,6 +1,6 @@
 {
   "name": "copypasta-extension",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "description": "Chrome extension that re-enables copy, cut, paste, selection and right-click on sites that block them.",
   "engines": { "node": ">=24" },

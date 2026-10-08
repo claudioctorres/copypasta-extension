@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Copypasta – Allow Copy & Paste",
   "short_name": "Copypasta",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Re-enable copy, cut, paste, text selection and right-click on sites that block them. Off by default; turn it on per site.",
   "minimum_chrome_version": "110",
   "permissions": ["scripting", "activeTab"],
